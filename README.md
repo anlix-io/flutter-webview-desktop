@@ -1,104 +1,59 @@
-# flutter-plugins
+# desktop_webview_window
 
-This repo contains the source code for Flutter plugins which used
-in [Mixin Messenger Desktop](https://github.com/MixinNetwork/flutter-app). Check the `packages` directory for all
-plugins.
+[![Pub](https://img.shields.io/pub/v/desktop_webview_window.svg)](https://pub.dev/packages/desktop_webview_window)
 
-[mixin_group_url]: https://mixin.one/codes/f07808ed-552d-4d8c-9778-dd57e5caac34
-Any questions join the [Mixin Flutter group][mixin_group_url]
+Show a webview window on your flutter desktop application.
 
-## Plugins
+|          |       |     |
+| -------- | ------- | ---- |
+| Windows  | ✅     | [Webview2](https://www.nuget.org/packages/Microsoft.Web.WebView2) 1.0.992.28 |
+| Linux    | ✅    |  [WebKitGTK-4.1](https://webkitgtk.org/reference/webkit2gtk/stable/index.html) |
+| macOS    | ✅     |  WKWebview |
 
-| Plugin                                                      | Pub                                                                          | Likes                                                                  | Platforms                  |
-|-------------------------------------------------------------|------------------------------------------------------------------------------|------------------------------------------------------------------------|----------------------------|
-| [desktop_drop](./packages/desktop_drop)                     | [![pub package][desktop_drop_version]][desktop_drop_pub]                     | [![likes][desktop_drop_likes]][desktop_drop_score]                     | Windows, Linux, macOS, web |
-| [desktop_lifecycle](./packages/desktop_lifecycle)           | [![pub package][desktop_lifecycle_version]][desktop_lifecycle_pub]           | [![likes][desktop_lifecycle_likes]][desktop_lifecycle_score]           | Windows, Linux, macOS      |
-| [ogg_opus_player](./packages/ogg_opus_player)               | [![pub package][ogg_opus_player_version]][ogg_opus_player_pub]               | [![likes][ogg_opus_player_likes]][ogg_opus_player_score]               | Windows, Linux, macOS, iOS |
-| [pasteboard](./packages/pasteboard)                         | [![pub package][pasteboard_version]][pasteboard_pub]                         | [![likes][pasteboard_likes]][pasteboard_score]                         | Windows, Linux, macOS, web |
-| [win_toast](./packages/win_toast)                           | [![pub package][win_toast_version]][win_toast_pub]                           | [![likes][win_toast_likes]][win_toast_score]                           | Windows                    |
-| [desktop_webview_window](./packages/desktop_webview_window) | [![pub package][desktop_webview_window_version]][desktop_webview_window_pub] | [![likes][desktop_webview_window_likes]][desktop_webview_window_score] | Windows, Linux, macOS      |
-| [fts5_simple](./packages/fts5_simple)                       | [![pub package][fts5_simple_version]][fts5_simple_pub]                       | [![likes][fts5_simple_likes]][fts5_simple_score]                       | Windows, Linux, macOS      |
-| [desktop_multi_window](./packages/desktop_multi_window)     | [![pub package][desktop_multi_window_version]][desktop_multi_window_pub]     | [![likes][desktop_multi_window_likes]][desktop_multi_window_score]     | Windows, Linux, macOS      |
-| [mixin_logger](./packages/mixin_logger)                     | [![pub package][mixin_logger_version]][mixin_logger_pub]                     | [![likes][mixin_logger_likes]][mixin_logger_score]                     | All Platforms              |
-| [ui_device](./packages/ui_device)                           | [![pub package][ui_device_version]][ui_device_pub]                           | [![likes][ui_device_likes]][ui_device_score]                           | iOS                        |
-| [string_tokenizer](./packages/string_tokenizer)             | Not Published                                                                | Not Published                                                          | macOS, iOS                 |
+## Getting Started
 
-[desktop_drop_version]: https://img.shields.io/pub/v/desktop_drop.svg
+1. modify your `main` method.
+   ```dart
+   import 'package:desktop_webview_window/desktop_webview_window.dart';
+   
+   void main() async {
+     WidgetsFlutterBinding.ensureInitialized();
+     
+     // Add this your main method.
+     // used to show a webview title bar.
+     if (runWebViewTitleBarWidget(args)) {
+       return;
+     }
+   
+     runApp(MyApp());
+   }
+   
+   ```
 
-[desktop_drop_pub]: https://pub.dev/packages/desktop_drop
+2. launch WebViewWindow
 
-[desktop_drop_likes]: https://img.shields.io/pub/likes/desktop_drop
+   ```dart
+     final webview = await WebviewWindow.create();
+     webview.launch("https://example.com");
+   ```
 
-[desktop_drop_score]: https://pub.dev/packages/desktop_drop/score
+### **linux requirement**
 
-[desktop_lifecycle_version]: https://img.shields.io/pub/v/desktop_lifecycle.svg
+```shell
+sudo apt-get install webkit2gtk-4.1
+```
 
-[desktop_lifecycle_pub]: https://pub.dev/packages/desktop_lifecycle
+### **Windows requirement**
 
-[desktop_lifecycle_likes]: https://img.shields.io/pub/likes/desktop_lifecycle
+The backend of desktop_webview_window on Windows is WebView2, which requires **WebView2 Runtime** installed.
 
-[desktop_lifecycle_score]: https://pub.dev/packages/desktop_lifecycle/score
+[WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2) is ship in box with Windows11, but
+it may not installed on Windows10 devices. So you need consider how to distribute the runtime to your users.
 
-[ogg_opus_player_version]: https://img.shields.io/pub/v/ogg_opus_player.svg
+See more: https://docs.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution
 
-[ogg_opus_player_pub]: https://pub.dev/packages/ogg_opus_player
+For convenience, you can use `WebviewWindow.isWebviewAvailable()` check whether the WebView2 is available.
 
-[ogg_opus_player_likes]: https://img.shields.io/pub/likes/ogg_opus_player
+## License
 
-[ogg_opus_player_score]: https://pub.dev/packages/ogg_opus_player/score
-
-[pasteboard_version]: https://img.shields.io/pub/v/pasteboard.svg
-
-[pasteboard_pub]: https://pub.dev/packages/pasteboard
-
-[pasteboard_likes]: https://img.shields.io/pub/likes/pasteboard
-
-[pasteboard_score]: https://pub.dev/packages/pasteboard/score
-
-[win_toast_version]: https://img.shields.io/pub/v/win_toast.svg
-
-[win_toast_pub]: https://pub.dev/packages/win_toast
-
-[win_toast_likes]: https://img.shields.io/pub/likes/win_toast
-
-[win_toast_score]: https://pub.dev/packages/win_toast/score
-
-[desktop_webview_window_version]: https://img.shields.io/pub/v/desktop_webview_window.svg
-
-[desktop_webview_window_pub]: https://pub.dev/packages/desktop_webview_window
-
-[desktop_webview_window_likes]: https://img.shields.io/pub/likes/desktop_webview_window
-
-[desktop_webview_window_score]: https://pub.dev/packages/desktop_webview_window/score
-
-[fts5_simple_version]: https://img.shields.io/pub/v/fts5_simple.svg
-
-[fts5_simple_pub]: https://pub.dev/packages/fts5_simple
-
-[fts5_simple_likes]: https://img.shields.io/pub/likes/fts5_simple
-
-[fts5_simple_score]: https://pub.dev/packages/fts5_simple/score
-
-[desktop_multi_window_version]: https://img.shields.io/pub/v/desktop_multi_window.svg
-
-[desktop_multi_window_pub]: https://pub.dev/packages/desktop_multi_window
-
-[desktop_multi_window_likes]: https://img.shields.io/pub/likes/desktop_multi_window
-
-[desktop_multi_window_score]: https://pub.dev/packages/desktop_multi_window/score
-
-[mixin_logger_version]: https://img.shields.io/pub/v/mixin_logger.svg
-
-[mixin_logger_pub]: https://pub.dev/packages/mixin_logger
-
-[mixin_logger_likes]: https://img.shields.io/pub/likes/mixin_logger
-
-[mixin_logger_score]: https://pub.dev/packages/mixin_logger/score
-
-[ui_device_version]: https://img.shields.io/pub/v/ui_device.svg
-
-[ui_device_pub]: https://pub.dev/packages/ui_device
-
-[ui_device_likes]: https://img.shields.io/pub/likes/ui_device
-
-[ui_device_score]: https://pub.dev/packages/ui_device/score
+see [LICENSE](./LICENSE)
