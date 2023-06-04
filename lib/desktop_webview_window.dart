@@ -4,6 +4,7 @@
 // directory. You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -116,7 +117,21 @@ class WebviewWindow {
         webview.onClosed();
         break;
       case "onJavaScriptMessage":
-        webview.onJavaScriptMessage(args['name'], args['body']);
+        String name = args['name'];
+        String body = args['body'];
+        try {
+          Map<String, dynamic> jsonBody = json.decode(args['body']);
+          if (jsonBody.containsKey('name') && jsonBody.containsKey('body')) {
+            name = jsonBody['name'];
+            body = jsonBody['body'];
+          }
+        } on FormatException {
+          // Body was not a json, stay with name and body as they were passed in
+        } on TypeError {
+          // Body was a valid json, but couldn't be case into a Map, stay with
+          // name and body as they were passed in
+        }
+        webview.onJavaScriptMessage(name, body);
         break;
       case "runJavaScriptTextInputPanelWithPrompt":
         return webview.onRunJavaScriptTextInputPanelWithPrompt(

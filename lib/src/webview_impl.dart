@@ -41,7 +41,6 @@ class WebviewImpl extends Webview {
   void onJavaScriptMessage(String name, dynamic body) {
     assert(!_closed);
     final handler = _javaScriptMessageHandlers[name];
-    assert(handler != null, "handler $name is not registed.");
     handler?.call(name, body);
   }
 
@@ -82,7 +81,7 @@ class WebviewImpl extends Webview {
   @override
   void registerJavaScriptMessageHandler(
       String name, JavaScriptMessageHandler handler) {
-    if (!Platform.isMacOS) {
+    if (!Platform.isMacOS && !Platform.isLinux) {
       return;
     }
     assert(!_closed);
@@ -100,12 +99,16 @@ class WebviewImpl extends Webview {
 
   @override
   void unregisterJavaScriptMessageHandler(String name) {
-    if (!Platform.isMacOS) {
+    if (!Platform.isMacOS && !Platform.isLinux) {
       return;
     }
     if (_closed) {
       return;
     }
+    if (!_javaScriptMessageHandlers.containsKey(name)) {
+      return;
+    }
+    _javaScriptMessageHandlers.remove(name);
     channel.invokeMethod("unregisterJavaScripInterface", {
       "viewId": viewId,
       "name": name,
