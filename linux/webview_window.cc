@@ -105,6 +105,18 @@ WebviewWindow::WebviewWindow(
                    G_CALLBACK(on_load_changed), this);
   g_signal_connect(G_OBJECT(webview_), "decide-policy",
                    G_CALLBACK(decide_policy_cb), this);
+  WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager(WEBKIT_WEB_VIEW(webview_));
+  g_signal_connect(
+    manager,
+    "script-message-received",
+    G_CALLBACK(+[](WebKitUserContentManager *, WebKitJavascriptResult *r, gpointer user_data) {
+      JSCValue *value = webkit_javascript_result_get_js_value(r);
+      g_autofree char *value_as_string = jsc_value_to_string(value);
+      auto *window = static_cast<WebviewWindow *>(user_data);
+      window->OnMessageReceived("anlixCallback", value_as_string);
+    }),
+    this
+  );
 
   auto settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webview_));
   webkit_settings_set_javascript_can_open_windows_automatically(settings, true);
@@ -232,4 +244,24 @@ void WebviewWindow::EvaluateJavaScript(const char *java_script, FlMethodCall *ca
         g_object_unref(call);
       },
       g_object_ref(call));
+}
+
+void WebviewWindow::OnMessageReceived(const char* name, const char* content) {
+  auto *args = fl_value_new_map();
+  fl_value_set(args, fl_value_new_string("id"), fl_value_new_int(window_id_));
+  fl_value_set(args, fl_value_new_string("name"), fl_value_new_string(name));
+  fl_value_set(args, fl_value_new_string("body"), fl_value_new_string(content));
+  fl_method_channel_invoke_method(
+    FL_METHOD_CHANNEL(method_channel_), "onJavaScriptMessage", args,
+    nullptr, nullptr, nullptr);
+}
+
+void WebviewWindow::RegisterJavaScriptInterface(const char *name) {
+  WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager(WEBKIT_WEB_VIEW(webview_));
+  webkit_user_content_manager_register_script_message_handler(manager, name);
+}
+
+void WebviewWindow::UnregisterJavaScriptInterface(const char *name) {
+  WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager(WEBKIT_WEB_VIEW(webview_));
+  webkit_user_content_manager_unregister_script_message_handler(manager, name);
 }

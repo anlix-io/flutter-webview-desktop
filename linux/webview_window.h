@@ -34,6 +34,8 @@ class WebviewWindow {
 
   void OnLoadChanged(WebKitLoadEvent load_event);
 
+  void OnMessageReceived(const char* name, const char* content);
+
   void GoBack();
 
   void GoForward();
@@ -46,6 +48,10 @@ class WebviewWindow {
                         WebKitPolicyDecisionType type);
 
   void EvaluateJavaScript(const char *java_script, FlMethodCall* call);
+
+  void RegisterJavaScriptInterface(const char *name);
+
+  void UnregisterJavaScriptInterface(const char *name);
 
  private:
   FlMethodChannel *method_channel_;
