@@ -199,6 +199,34 @@ static void webview_window_plugin_handle_method_call(
     }
     auto *js = fl_value_get_string(fl_value_lookup_string(args, "javaScriptString"));
     self->windows->at(window_id)->EvaluateJavaScript(js, method_call);
+  } else if (strcmp(method, "registerJavaScripInterface") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    if (fl_value_get_type(args) != FL_VALUE_TYPE_MAP) {
+      fl_method_call_respond_error(method_call, "0", "registerJavaScriptInterface args is not map", nullptr, nullptr);
+      return;
+    }
+    auto window_id = fl_value_get_int(fl_value_lookup_string(args, "viewId"));
+    if (!self->windows->count(window_id)) {
+      fl_method_call_respond_error(method_call, "0", "can not found webview for viewId", nullptr, nullptr);
+      return;
+    }
+    auto name = fl_value_get_string(fl_value_lookup_string(args, "name"));
+    self->windows->at(window_id)->RegisterJavaScriptInterface(name);
+    fl_method_call_respond_success(method_call, nullptr, nullptr);
+  } else if (strcmp(method, "unregisterJavaScripInterface") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    if (fl_value_get_type(args) != FL_VALUE_TYPE_MAP) {
+      fl_method_call_respond_error(method_call, "0", "unregisterJavaScripInterface args is not map", nullptr, nullptr);
+      return;
+    }
+    auto window_id = fl_value_get_int(fl_value_lookup_string(args, "viewId"));
+    if (!self->windows->count(window_id)) {
+      fl_method_call_respond_error(method_call, "0", "can not found webview for viewId", nullptr, nullptr);
+      return;
+    }
+    auto name = fl_value_get_string(fl_value_lookup_string(args, "name"));
+    self->windows->at(window_id)->UnregisterJavaScriptInterface(name);
+    fl_method_call_respond_success(method_call, nullptr, nullptr);
   } else {
     fl_method_call_respond_not_implemented(method_call, nullptr);
   }
