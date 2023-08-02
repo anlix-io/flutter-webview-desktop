@@ -230,3 +230,6 @@ void WebviewWindow::EvaluateJavaScript(const char *java_script, FlMethodCall *ca
           fl_method_call_respond_success(call, js_value ? fl_value_new_string(js_value) : nullptr, nullptr);
         }
         g_object_unref(call);
+      },
+      g_object_ref(call));
+}
